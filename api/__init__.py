@@ -6,4 +6,8 @@
 """
 from tornado.web import Application
 
-app = Application()
+from api.request_handler import MDBRequestHandler
+
+app = Application([(r'/', MDBRequestHandler),
+                   (r'/(?P<db>[^\/]+)/(?P<collection>[^\/]+)', MDBRequestHandler),
+                   (r'/(?P<db>[^\/]+)/(?P<collection>[^\/]+)/(?P<oid>[^\/]+)', MDBRequestHandler)])

@@ -38,11 +38,15 @@ class Database(object):
     def read(self, oid):
         result = {}
         if oid:
+            try:
+                oid = ObjectId(oid)
+            except TypeError:
+                return None
             document = yield self.collection.find_one({'_id': ObjectId(oid)})
             if document:
                 result = self.__validate(document)
         else:
-            cursor = yield self.collection.find({})
+            cursor = self.collection.find({})
             while (yield cursor.fetch_next):
                 document = cursor.next_object()
                 result.update(self.__validate(document))

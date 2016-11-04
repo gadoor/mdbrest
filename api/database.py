@@ -53,9 +53,22 @@ class Database(object):
         return result
 
     @coroutine
-    def update(self, oid, data):
-        pass
+    def update_one(self, oid, data):
+        update_result = yield self.collection.update_one({'_id': ObjectId(oid)},
+                                                         {'$set': data})
+
+        return {'update_count': update_result.modified_count}
+
+    @coroutine
+    def update_many(self, filter_by, data):
+        update_result = yield self.collection.update_many(filter_by, data)
+        return {'update_count': update_result.modified_count}
 
     @coroutine
     def delete(self, oid):
-        pass
+        if oid:
+            delete_result = yield self.collection.delete_one({'_id': ObjectId(oid)})
+            result = {'deleted_count': delete_result.deleted_count}
+        else:
+            result = None
+        return result

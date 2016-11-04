@@ -9,15 +9,20 @@ from tornado.ioloop import IOLoop
 from motor import motor_tornado
 
 from api import get_application
+from api.config import load_config
 
 
 def main(port=6767):
     try:
+        config = load_config()
         app = get_application()
+
         http_server = HTTPServer(app)
         http_server.bind(port)
         http_server.start()
-        app.settings['client'] = motor_tornado.MotorClient("mongodb://192.168.122.10:27017")
+
+        app.settings['client'] = motor_tornado.MotorClient("mongodb://%(host)s:%(port)s" % config['mongodb'])
+
         IOLoop.current().start()
     except KeyboardInterrupt:
         IOLoop.current().stop()

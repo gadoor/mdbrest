@@ -18,8 +18,8 @@ class MDBRequestHandler(RequestHandler):
     @coroutine
     def post(self, db, collection):
         database = Database(self.client, db, collection)
-        params = self.get_rest_params()
-        response = yield database.create(params)
+        data = self.get_rest_params()
+        response = yield database.create(data)
         self.write_rest(response)
 
     @coroutine
@@ -29,14 +29,20 @@ class MDBRequestHandler(RequestHandler):
         self.write_rest(response)
 
     @coroutine
-    def patch(self, db, collection, oid=None):
+    def patch(self, db, collection):
         database = Database(self.client, db, collection)
-        pass
+        params = self.get_rest_params()
+        filter_by = params.get('filter', None)
+        data = params.get('data', None)
+        response = database.update_many(filter_by, data)
+        self.write_rest(response)
 
     @coroutine
     def put(self, db, collection, oid=None):
+        data = self.get_rest_params()
         database = Database(self.client, db, collection)
-        pass
+        response = database.update_one(oid, data)
+        self.write_rest(response)
 
     @coroutine
     def delete(self, db, collection, oid=None):

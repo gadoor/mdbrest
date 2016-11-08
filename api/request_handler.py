@@ -38,7 +38,7 @@ class MDBRequestHandler(RequestHandler):
         self.write_rest(response)
 
     @coroutine
-    def put(self, db, collection, oid=None):
+    def put(self, db, collection, oid):
         data = self.get_rest_params()
         database = Database(self.client, db, collection)
         response = database.update_one(oid, data)
